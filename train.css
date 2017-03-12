@@ -1,0 +1,20 @@
+.jumbotron{
+	color: white;
+	background-color: gray;
+}
+.panel-title{
+	color: white;
+
+}
+.panel-default>.panel-heading {
+	background-color: #428bca;
+}
+body {
+	background-image: url("traintrack.jpg");
+	background-repeat: no-repeat;
+	background-size:cover;
+	opacity: .95;
+}
+.btn {
+	margin-left: 43%;
+}
