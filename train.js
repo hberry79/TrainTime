@@ -32,7 +32,7 @@ $(document).ready(function() {
         // getting our values ready to input in firebase
         trainName = $("#name-input").val().trim();
         destination = $("#destination-input").val().trim();
-        firstTrainTime = moment($("#time-input").val().trim(), "HH:mm").subtract(10, "years").format("X");
+        firstTrainTime = moment($("#time-input").val().trim(), "HH:mm").format("X");
         frequency = $("#frequency-input").val().trim();
 
         console.log(firstTrainTime);
