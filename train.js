@@ -70,28 +70,29 @@ $(document).ready(function() {
         var currentHour = moment().format('H');
         var currentMin = moment().format('m');
 
-         //splitting my time into an array so I can access the two values seperately
-         var domfirstTrainTime = moment(firstTrainTime, "hh:mm a").format("HH:mm");
-        firstTime = firstTrainTime.split(':');
-        console.log(firstTime)
+        //splitting my time into an array so I can access the two values seperately
+        var firstTime = moment(domfirstTrainTime, "hh:mm a").format("HH:mm");
+        realTime = firstTime.split(':');
 
         //Calling our hour and min that we pushed into an array above
-        var firstHour = firstTime[0];
-        var firstMin = firstTime[1];
+        var firstHour = realTime[0];
+        var firstMin = realTime[1];
 
         //converting hour to minutes
-        var current = (currentHour * 60) + parseInt(currentMin);
+        var currentTime = (currentHour * 60) + parseInt(currentMin);
         var first = (firstHour * 60) + parseInt(firstMin);
 
         // If the train has already left the station
-        if (first < current) {
-            minutesAway = (((Math.ceil((current - first) / frequency)) * frequency) + first) - current;
+        if (first < currentTime) {
+            //The Math.ceil() function returns the smallest integer greater than or equal to a given number.
+            minutesAway = (((Math.ceil((currentTime - first) / frequency)) * frequency) + first) 
+            - currentTime;
             nextArrival = moment().add(minutesAway, "minutes").format('h:mm A');
         }
 
         // if the train has not arrived yet
         else {
-            minutesAway = first - current;
+            minutesAway = first - currentTime;
             nextArrival = moment(firstTrainTime, "HH:mm").format('h:mm A');
         }
 
