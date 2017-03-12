@@ -57,13 +57,12 @@ $(document).ready(function() {
 
     database.ref("/trains").on("child_added", function(childSnapshot) {
 
-        // Store everything into a variable.
+        // Store everything into a variable. t stand for train ya'll.
         var tName = childSnapshot.val().trainName;
         var tDestination = childSnapshot.val().Destination;
         var tFrequency = childSnapshot.val().frequency;
         var tFirstTrain = childSnapshot.val().firstTrainTime;
 
-        // Calculate the minutes until arrival using hardcore math
         // To calculate the minutes till arrival, take the current time in unix subtract the FirstTrain 
         //time and find the modulus between the difference and the frequency  
         var differenceTimes = moment().diff(moment.unix(tFirstTrain), "minutes");
@@ -73,9 +72,16 @@ $(document).ready(function() {
         // To calculate the arrival time, add the tMinutes to the currrent time
         var tArrival = moment().add(tMinutes, "m").format("hh:mm A");
 
-        // if (minutesAway < 2) {
-        //     alert(tName + " is about to leave!")
-        // }
+        if (tMinutes <= 5 ) {
+        $("#5min").append(
+            "<tr>" +
+            "<td>" + tName + "</td>" +
+            "<td>" + tDestination + "</td>" +
+            "<td>" + tFrequency + "</td>" +
+            "<td>" + tArrival + "</td>" +
+            "<td><font color='red'>" + tMinutes + "</td></font>" + "</tr>");
+        return;
+        }
 
 
         //Pushing to the DOM

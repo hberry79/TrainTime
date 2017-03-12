@@ -18,3 +18,8 @@ body {
 .btn {
 	margin-left: 45%;
 }
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #222f5b;
+  color: white;
+  opacity: .5;
+}
