@@ -32,10 +32,11 @@ $(document).ready(function() {
         // getting our values ready to input in firebase
         trainName = $("#name-input").val().trim();
         destination = $("#destination-input").val().trim();
-        firstTrainTime = $("#time-input").val();
+        firstTrainTime = moment($("#time-input").val().trim(), "HH:mm").subtract(10, "years").format("X");
         frequency = $("#frequency-input").val().trim();
 
-       
+        console.log(firstTrainTime);
+
 
         //pushing to the database
         database.ref("/trains").push({
@@ -56,62 +57,35 @@ $(document).ready(function() {
 
     database.ref("/trains").on("child_added", function(childSnapshot) {
 
-        //Getting the info we need from the returned "snapshot"
-        var domName = childSnapshot.val().trainName;
-        var domDestination = childSnapshot.val().Destination;
-        var domfirstTrainTime = childSnapshot.val().firstTrainTime;
-        var domFrequency = childSnapshot.val().frequency;
+        // Store everything into a variable.
+        var tName = childSnapshot.val().trainName;
+        var tDestination = childSnapshot.val().Destination;
+        var tFrequency = childSnapshot.val().frequency;
+        var tFirstTrain = childSnapshot.val().firstTrainTime;
 
-        //initializing vars to calculate next arrival and mins away
-        var nextArrival = 0;
-        var minutesAway = 0;
+        // Calculate the minutes until arrival using hardcore math
+        // To calculate the minutes till arrival, take the current time in unix subtract the FirstTrain 
+        //time and find the modulus between the difference and the frequency  
+        var differenceTimes = moment().diff(moment.unix(tFirstTrain), "minutes");
+        var tRemainder = moment().diff(moment.unix(tFirstTrain), "minutes") % tFrequency;
+        var tMinutes = tFrequency - tRemainder;
 
-        //what time is our user accesing the page?
-        var currentHour = moment().format('H');
-        var currentMin = moment().format('m');
+        // To calculate the arrival time, add the tMinutes to the currrent time
+        var tArrival = moment().add(tMinutes, "m").format("hh:mm A");
 
-        //splitting my time into an array so I can access the two values seperately
-        var firstTime = moment(domfirstTrainTime, "hh:mm a").format("HH:mm");
-        realTime = firstTime.split(':');
-
-        //Calling our hour and min that we pushed into an array above
-        var firstHour = realTime[0];
-        var firstMin = realTime[1];
-
-        //converting hour to minutes
-        var currentTime = (currentHour * 60) + parseInt(currentMin);
-        var first = (firstHour * 60) + parseInt(firstMin);
-
-        // If the train has already left the station
-        if (first < currentTime) {
-            //The Math.ceil() function returns the smallest integer greater than or equal to a given number.
-            minutesAway = (((Math.ceil((currentTime - first) / frequency)) * frequency) + first) 
-            - currentTime;
-            nextArrival = moment().add(minutesAway, "minutes").format('h:mm A');
-        }
-
-        // if the train has not arrived yet
-        else {
-            minutesAway = first - currentTime;
-            nextArrival = moment(firstTrainTime, "HH:mm").format('h:mm A');
-        }
-
-        console.log(minutesAway);
-        console.log(nextArrival);
-
-        if (minutesAway < 2) {
-            alert(domName + " is about to leave!")
-        }
+        // if (minutesAway < 2) {
+        //     alert(tName + " is about to leave!")
+        // }
 
 
         //Pushing to the DOM
         $("#mainTable").append(
             "<tr>" +
-            "<td>" + domName + "</td>" +
-            "<td>" + domDestination + "</td>" +
-            "<td>" + domFrequency + "</td>" +
-            "<td>" + nextArrival + "</td>" +
-            "<td>" + minutesAway + "</td>" + "</tr>"
+            "<td>" + tName + "</td>" +
+            "<td>" + tDestination + "</td>" +
+            "<td>" + tFrequency + "</td>" +
+            "<td>" + tArrival + "</td>" +
+            "<td>" + tMinutes + "</td>" + "</tr>"
         );
         // Handle the errors
     }, function(errorObject) {
